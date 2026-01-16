@@ -1,0 +1,26 @@
+! --- 基礎第三方廣告域名封鎖 ---
+||popads.net^
+||juicyads.com^
+||exoclick.com^
+||adscore.com^
+||adnium.com^
+||doubleclick.net^
+||google-analytics.com^
+
+! --- 針對 supjav.com 的特定元素隱藏 ---
+supjav.com##.ads-container
+supjav.com##.popup-ad
+supjav.com##div[id^="ad-"]
+supjav.com##iframe[src*="ads"]
+
+! --- 針對第三方影片空間的廣告攔截 ---
+! 攔截 Streamtape 等空間常見的疊加層廣告
+||streamtape.com/adserve/*
+||vidoza.net/js/pop.js
+||fembed.com/banners/*
+
+! --- 關鍵字封鎖 (攔截包含關鍵字的請求) ---
+/ads/
+/popunder/
+/tracking/
+/pixel/
