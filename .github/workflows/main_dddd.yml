@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy container app to Azure Web App - dddd
 
 on:
@@ -9,46 +12,52 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to Docker Hub
+      - name: Log in to container registry
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: index.docker.io/
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CA8F158B227145AABC5E2C72EA2A48F2 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_ED7A65736FD24304BE1BF0EB818E6186 }}
 
-      - name: Build and push
+      - name: Build and push container image to registry
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          # 這裡必須直接指向您的帳號路徑
-          tags: ericqwwwer/coweb:latest
+          tags: index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CA8F158B227145AABC5E2C72EA2A48F2 }}/ericqwwwer/coweb:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # 必須加上這一行來解決您剛才看到的錯誤
-      contents: read 
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     needs: build
     
     steps:
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_22F2507BE33E49BEAF315BCBF20204DA }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F34AC28B8B42415890082EFC028E1033 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3972C73602E84379BF473BDE9F6D5891 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B3C00B08D78241B096828F15E797F449 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7930A349A9AC4F7395E73B3FE267FDC6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2CA1751427E44AA1B19C52A275C50764 }}
 
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dddd'
-          images: 'ericqwwwer/coweb:latest'
-
+          slot-name: 'Production'
+          images: 'index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CA8F158B227145AABC5E2C72EA2A48F2 }}/ericqwwwer/coweb:${{ github.sha }}'
+          
