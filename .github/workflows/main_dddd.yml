@@ -32,7 +32,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # 必須加上這一行來解決您剛才看到的錯誤
+      contents: read 
+
     needs: build
+    
     steps:
       - name: Login to Azure
         uses: azure/login@v2
@@ -46,3 +51,4 @@ jobs:
         with:
           app-name: 'dddd'
           images: 'ericqwwwer/coweb:latest'
+
