@@ -25,15 +25,15 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: index.docker.io/
-          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_AD0A9185CDD54EBC9EA3229DC00339F6 }}
-          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_EE8B4AE4297C482183BA37503D3F06AF }}
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_3014D86FB170412A80A7928A060F111C }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_763EFD64AEAA422F86041BFF6DAECFB8 }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_AD0A9185CDD54EBC9EA3229DC00339F6 }}/ericqwwwer/coweb:${{ github.sha }}
+          tags: index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_3014D86FB170412A80A7928A060F111C }}/ericqwwwer/coweb:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
@@ -49,9 +49,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FBA303709CE1454A81286DBBC72E2969 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BDE2B97F17464C5496F42B6DC87E7519 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CB8337F0038F4AD5B7549AA41ED4A469 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_101363B4C47F4239A832E09C94774229 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_895D99307AA74C248250FC1F151D4E12 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DB7276210248446E8AB0F172804398CC }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -59,5 +59,5 @@ jobs:
         with:
           app-name: 'dddd'
           slot-name: 'Production'
-          images: 'index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_AD0A9185CDD54EBC9EA3229DC00339F6 }}/ericqwwwer/coweb:${{ github.sha }}'
+          images: 'index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_3014D86FB170412A80A7928A060F111C }}/ericqwwwer/coweb:${{ github.sha }}'
           
