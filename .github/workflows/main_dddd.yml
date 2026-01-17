@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read 
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -25,34 +25,33 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: index.docker.io/
-          # 使用您手動在 GitHub Secrets 設定的正確帳密
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_8309463E358544F0A146D7FA61679AB5 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_33725472370441268F6B080F5E164D75 }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          # 標籤必須與您的 Docker Hub 帳號路徑完全一致
-          tags: ericqwwwer/coweb:latest
+          tags: index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_8309463E358544F0A146D7FA61679AB5 }}/ericqwwwer/coweb:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: read 
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     needs: build
     
     steps:
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F03EEC56127B465C88E3BC6DF50BC118 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DA30D4D4D3F74D87AA544DD953C46042 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0228E99C5EFC4E24AE3579FB1B3CD1D1 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_22F2507BE33E49BEAF315BCBF20204DA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F34AC28B8B42415890082EFC028E1033 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3972C73602E84379BF473BDE9F6D5891 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -60,5 +59,5 @@ jobs:
         with:
           app-name: 'dddd'
           slot-name: 'Production'
-          # 指向剛才 Build 好的新映像檔
-          images: 'ericqwwwer/coweb:latest'
+          images: 'index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_8309463E358544F0A146D7FA61679AB5 }}/ericqwwwer/coweb:${{ github.sha }}'
+          
