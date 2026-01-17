@@ -33,8 +33,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CA8F158B227145AABC5E2C72EA2A48F2 }}/ericqwwwer/coweb:${{ github.sha }}
-          file: ./Dockerfile
+          tags: ericqwwwer/coweb:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,4 +59,5 @@ jobs:
           app-name: 'dddd'
           slot-name: 'Production'
           images: 'index.docker.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CA8F158B227145AABC5E2C72EA2A48F2 }}/ericqwwwer/coweb:${{ github.sha }}'
+
           
